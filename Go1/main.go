@@ -2,54 +2,51 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 )
 
-type Vehicle interface {
-	CalculateTravelTime(distance float64) float64
+type Animal interface {
+	MakeSound() string
+	GetName() string
+	GetInfo() string
 }
 
-type Car struct {
-	Type     string
-	Speed    float64
-	FuelType string
+func (a animal) MakeSound() string { return a.sound }
+func (a animal) GetName() string   { return a.name }
+func (a animal) GetInfo() string {
+	return fmt.Sprintf("Имя: %s, Вид: %s, Возраст: %d", a.name, a.species, a.age)
 }
 
-func (c Car) CalculateTravelTime(distance float64) float64 {
-	return distance / c.Speed
+type animal struct {
+	name    string
+	species string
+	age     int
+	sound   string
 }
 
-type Motorcycle struct {
-	Type     string
-	Speed    float64
-	FuelType string
+func NewAnimal(name, species string, age int, sound string) animal {
+	return animal{name, species, age, sound}
 }
 
-func (m Motorcycle) CalculateTravelTime(distance float64) float64 {
-	return distance / m.Speed
-}
+func ZooShow(animals []Animal) {
 
-func EstimateTravelTime(vehicles []Vehicle, distance float64) map[string]float64 {
-	var res = map[string]float64{}
-
-	for _, tr := range vehicles {
-		typeName := reflect.TypeOf(tr).String()
-		res[typeName] = tr.CalculateTravelTime(distance)
+	for _, animal := range animals {
+		fmt.Println(animal.GetInfo())
+		fmt.Println(animal.MakeSound())
 	}
+}
 
-	return res
+type ZooKeeper struct {
+}
+
+func (zk ZooKeeper) Feed(animal Animal) {
+	fmt.Printf("Смотритель зоопарка кормит %s. %s!\n", animal.GetName(), animal.MakeSound())
 }
 
 func main() {
-	car := Car{Type: "Седан", Speed: 60.0, FuelType: "Бензин"}
-	motorcycle := Motorcycle{Type: "Мотоцикл", Speed: 80.0}
+	tiger := NewAnimal("Барсик", "Тигр", 5, "Ррр")
+	penguin := NewAnimal("Пиня", "Пингвин", 2, "Кря")
+	ZooShow([]Animal{tiger, penguin})
 
-	vehicles := []Vehicle{car, motorcycle}
-
-	distance := 200.0
-
-	travelTimes := EstimateTravelTime(vehicles, distance)
-
-	fmt.Printf("Ожидается время для автомобиля %.2f часа\n", travelTimes["main.Car"])
-	fmt.Printf("Ожидается время для мотоцикла %.2f часа", travelTimes["main.Motorcycle"])
+	keeper := ZooKeeper{}
+	keeper.Feed(tiger)
 }
