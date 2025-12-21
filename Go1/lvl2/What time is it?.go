@@ -50,7 +50,7 @@ func nextFriday() int {
 
 func CheckCurrentDayOfTheWeek(answer string) bool {
 	current := currentDayOfTheWeek()
-	return strings.ToLower(current) == strings.ToLower(answer)
+	return strings.EqualFold(current, answer)
 }
 
 func CheckNowDayOrNight(answer string) (bool, error) {
